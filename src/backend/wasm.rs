@@ -10,7 +10,7 @@ use web_sys::{
 
 // Crate stuff
 use crate::usb::{
-    ControlIn, ControlOut, ControlType, UsbDeviceInfo, UsbDevice, UsbInterface, Recipient, Error,
+    ControlIn, ControlOut, ControlType, Error, Recipient, UsbDevice, UsbDeviceInfo, UsbInterface,
 };
 
 #[wasm_bindgen]
@@ -29,7 +29,13 @@ pub struct Device {
 #[derive(Debug)]
 pub struct Interface {
     device: WasmUsbDevice,
-    _number: u8,
+    number: u8,
+}
+
+impl Interface {
+    pub fn number(&self) -> u8 {
+        self.number
+    }
 }
 
 #[wasm_bindgen]
@@ -165,7 +171,9 @@ pub async fn get_device(device_filter: Vec<DeviceFilter>) -> Result<DeviceInfo, 
 }
 
 #[wasm_bindgen]
-pub async fn get_device_list(device_filter: Vec<DeviceFilter>) -> Result<Vec<DeviceInfo>, js_sys::Error> {
+pub async fn get_device_list(
+    device_filter: Vec<DeviceFilter>,
+) -> Result<Vec<DeviceInfo>, js_sys::Error> {
     let window = web_sys::window().unwrap();
 
     let navigator = window.navigator();
@@ -324,7 +332,7 @@ impl UsbDevice for Device {
 
         Ok(Interface {
             device: self.device.clone(),
-            _number: number,
+            number,
         })
     }
 
